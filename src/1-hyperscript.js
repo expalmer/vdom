@@ -10,15 +10,8 @@ function h(tagName, props = null, ...children) {
   };
 }
 
-// funcao recursiva
-/**
- {
-    "tagName": "div",
-    "props": null,
-    "children": ["ola"]
-}
-*/
 function createElement(node) {
+  // so pode ser um objeto `h` ou um string
   if (!node?.tagName) {
     return document.createTextNode(String(node));
   }
@@ -34,14 +27,10 @@ function createElement(node) {
 function main() {
   const $root = document.getElementById("root");
 
-  const tree = h(
-    "p",
-    null,
-    h("h1", null, "My Todo List"),
-    h("ul", null, h("li", null, "oi"), h("li", null, "meu chapa"))
-  );
+  const tree = h("div", null, "texto");
 
   console.log(tree);
+
   const dom = createElement(tree);
 
   console.log(dom);

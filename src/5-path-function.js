@@ -5,6 +5,7 @@ function h(tagName, props = null, ...children) {
     children = children[0];
   }
 
+  // 👉
   if (typeof tagName === "function") {
     return tagName({ ...props, children });
   }
@@ -57,13 +58,10 @@ function patch($parent, newTree, oldTree, childNodeIndex = 0) {
   }
 
   if (hasChanged(newTree, oldTree)) {
-    // se mudou, eu ignoro o que tinha e crio novos nodes
     $parent.childNodes[childNodeIndex].replaceWith(createElement(newTree));
     return;
   }
 
-  // se não mudou, precisa verificar se as props mudaram
-  // agora usamos um applyProps com os valores antigos e novos
   applyProps($parent.childNodes[childNodeIndex], newTree.props, oldTree.props);
 
   let i = 0;
@@ -92,7 +90,6 @@ function applyProps($el, nextProps, currentProps) {
     const name = propName === "className" ? "class" : propName;
     if (!newValue) {
       $el.removeAttribute(name);
-      // a implementação no reac, preact é diferente..
     } else if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
       if (name === "style") {
         Object.entries(newValue).forEach(([key, val]) => {
@@ -105,32 +102,11 @@ function applyProps($el, nextProps, currentProps) {
   });
 }
 
-function Title(props) {
-  return h("h1", null, props.title);
+function App(props) {
+  return h("div", null, props.children);
 }
 
-function List({ children, ...props }) {
-  return h("ul", props, children);
-}
-
-function ListItem({ content, ...props }) {
-  return h("li", null, content);
-}
-
-const trees = [
-  h(
-    "div",
-    null,
-    h(Title, { title: "Hay ia", className: "red" }),
-    h(
-      List,
-      null,
-      h(ListItem, { content: "A" }),
-      h(ListItem, { content: "B" }),
-      h(ListItem, { content: "C" })
-    )
-  ),
-];
+const trees = [h(App, null, h("span", null, "Ola sou span teu unico filho"))];
 
 let currentTree = undefined;
 

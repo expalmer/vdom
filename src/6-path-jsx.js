@@ -59,13 +59,10 @@ function patch($parent, newTree, oldTree, childNodeIndex = 0) {
   }
 
   if (hasChanged(newTree, oldTree)) {
-    // se mudou, eu ignoro o que tinha e crio novos nodes
     $parent.childNodes[childNodeIndex].replaceWith(createElement(newTree));
     return;
   }
 
-  // se não mudou, precisa verificar se as props mudaram
-  // agora usamos um applyProps com os valores antigos e novos
   applyProps($parent.childNodes[childNodeIndex], newTree.props, oldTree.props);
 
   let i = 0;
@@ -94,7 +91,6 @@ function applyProps($el, nextProps, currentProps) {
     const name = propName === "className" ? "class" : propName;
     if (!newValue) {
       $el.removeAttribute(name);
-      // a implementação no reac, preact é diferente..
     } else if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
       if (name === "style") {
         Object.entries(newValue).forEach(([key, val]) => {
@@ -107,38 +103,23 @@ function applyProps($el, nextProps, currentProps) {
   });
 }
 
-// function Title(props) {
-//   return h("h1", null, props.title);
-// }
-
-// function List({ children, ...props }) {
-//   return h("ul", props, children);
-// }
-
-// function ListItem({ content, ...props }) {
-//   return h("li", null, content);
-// }
-
-// const trees = [
-//   h(
-//     "div",
-//     null,
-//     h(Title, { title: "Hay ia", className: "red" }),
-//     h(
-//       List,
-//       null,
-//       h(ListItem, { content: "A" }),
-//       h(ListItem, { content: "B" }),
-//       h(ListItem, { content: "C" })
-//     )
-//   ),
-// ];
-
-const Spanzao = (props) => <span>{props.content}</span>;
-
 const trees = [
-  <span style={{ color: "red" }}>Olá</span>,
-  <Spanzao content="segue ai " />,
+  <div style={{ color: "red" }} className="container">
+    Olá meu chapa usando JSX
+    <ul>
+      <li>A</li>
+      <li>B</li>
+      <li>C</li>
+    </ul>
+  </div>,
+  <div style={{ color: "red" }} className="container">
+    Outro texto
+    <ul>
+      <li>X</li>
+      <li>B</li>
+      <li>C</li>
+    </ul>
+  </div>,
 ];
 
 let currentTree = undefined;
@@ -150,7 +131,7 @@ async function main() {
     patch($root, nextTree, currentTree);
     currentTree = nextTree;
 
-    await wait(2000);
+    await wait(4000);
   }
 }
 

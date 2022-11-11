@@ -17,6 +17,7 @@ function createElement(node) {
 
   const $el = document.createElement(node.tagName);
 
+  // 👉
   applyProps($el, node.props);
 
   const elements = node.children.map(createElement);
@@ -25,10 +26,11 @@ function createElement(node) {
   return $el;
 }
 
+// 👉
 function applyProps($el, props) {
   Object.entries(props || {}).forEach(([propName, propValue]) => {
     const name = propName === "className" ? "class" : propName;
-    //{ style: { color: red }, className: 'container' }
+    // { style: { color: red }, className: 'container' }
     if (name === "style") {
       Object.entries(propValue).forEach(([key, val]) => {
         $el.style[key] = val;
@@ -43,18 +45,18 @@ function main() {
   const $root = document.getElementById("root");
 
   const tree = h(
-    "div",
-    { className: "container" },
-    h("h1", null, "My Todo List"),
+    "h1",
+    { className: "container", style: { color: "red" } },
     h(
       "ul",
-      { style: { fontSize: "18px" } },
-      h("li", { style: { color: "red" } }, "oi"),
-      h("li", null, "meu chapa")
+      { className: "list" },
+      h("li", null, "Arroz"),
+      h("li", null, "Feijao"),
+      h("li", null, "Massa")
     )
   );
 
-  console.log(tree);
+  console.dir(tree);
 
   const dom = createElement(tree);
 

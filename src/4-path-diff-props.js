@@ -53,13 +53,12 @@ function patch($parent, newTree, oldTree, childNodeIndex = 0) {
   }
 
   if (hasChanged(newTree, oldTree)) {
-    // se mudou, eu ignoro o que tinha e crio novos nodes
     $parent.childNodes[childNodeIndex].replaceWith(createElement(newTree));
     return;
   }
 
-  // se não mudou, precisa verificar se as props mudaram
-  // agora usamos um applyProps com os valores antigos e novos
+  // Se não mudou, precisa verificar se as props mudaram
+  // Agora usamos um applyProps com os valores antigos e novos (lembra que o antigo não tinha esses params)
   applyProps($parent.childNodes[childNodeIndex], newTree.props, oldTree.props);
 
   let i = 0;
@@ -79,18 +78,21 @@ function patch($parent, newTree, oldTree, childNodeIndex = 0) {
   }
 }
 
+// 👉
 function applyProps($el, nextProps, currentProps) {
   const newProps = nextProps || {};
   const oldProps = currentProps || {};
+  // junta todas chaves, e itera cada uma para verificar as props old com as props new
   Object.keys({ ...newProps, ...oldProps }).forEach((propName) => {
     const newValue = newProps[propName];
     const oldValue = oldProps[propName];
     const name = propName === "className" ? "class" : propName;
     if (!newValue) {
       $el.removeAttribute(name);
-      // a implementação no reac, preact é diferente..
+      // a implementação no reac, preact é diferente...
     } else if (JSON.stringify(newValue) !== JSON.stringify(oldValue)) {
       if (name === "style") {
+        // poderiamos melhorar o algoritmo...
         Object.entries(newValue).forEach(([key, val]) => {
           $el.style[key] = val;
         });

@@ -41,15 +41,17 @@ function applyProps($el, props) {
   });
 }
 
+// 👉
 function patch($parent, newTree, oldTree, childNodeIndex = 0) {
   if (!oldTree) {
+    // Se não tem a old tree, só confia e cria tudo novo e apenda
     $parent.appendChild(createElement(newTree));
     return;
   }
 
   if (!newTree) {
+    // Se não tem a new tree, remove de tras para frente até X vezes = qtd de children do $parent (-) childNodeIndex atual
     let times = $parent.childNodes.length - childNodeIndex;
-    console.log(times);
     while (times-- > 0) {
       if ($parent.lastChild) {
         $parent.removeChild($parent.lastChild);
@@ -58,6 +60,7 @@ function patch($parent, newTree, oldTree, childNodeIndex = 0) {
     return;
   }
 
+  // Ou o tagName mudou ou a string (lembra que só pode ser um objet h ou um string)
   const hasChanged =
     typeof newTree === "object"
       ? newTree?.tagName !== oldTree?.tagName
@@ -69,13 +72,14 @@ function patch($parent, newTree, oldTree, childNodeIndex = 0) {
     return;
   }
 
+  // Qtd de children de quem tem mais, e itera lado a lado cada um
   arrayFromMax(newTree?.children?.length, oldTree?.children?.length).forEach(
     (index) => {
       patch(
-        $parent.childNodes[childNodeIndex],
+        $parent.childNodes[childNodeIndex], // o parent agora é esse
         newTree?.children?.[index],
         oldTree?.children?.[index],
-        index
+        index // Esse index é importante para saber qual childrenIndex está
       );
     }
   );
@@ -85,13 +89,18 @@ const trees = [
   h(
     "div",
     null,
-    h("h1", null, "Title"),
-    h("span", null, "Oi"),
-    h("span", null, "Oi")
+    h("p", null, h("span", null, "Aqui"), h("span", null, "Aqui")),
+    h("h1", null, "h2")
   ),
-  h("div", null, h("h2", null, "Title"), h("span", null, "Oi")),
+  h(
+    "div",
+    null,
+    h("p", null, h("span", null, "Aqui"), h("strong", null, "Strong")),
+    h("h1", null, "h2")
+  ),
 ];
 
+// 👉
 let currentTree = undefined;
 
 async function main() {
